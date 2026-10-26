@@ -1,6 +1,6 @@
 # Этап 1: сборка WAR через Maven
 FROM maven:3.8-openjdk-11 AS buildMaven
-WORKDIR /myApp                   # <-- обязательно: задаём рабочую папку
+WORKDIR /app
 
 COPY pom.xml .
 COPY src ./src
@@ -12,6 +12,6 @@ RUN mvn package -DskipTests
 FROM tomcat:9.0-jdk11-openjdk
 
 # Копируем любой WAR-файл из target стадии buildMaven
-COPY --from=buildMaven /myApp/target/*.war /usr/local/tomcat/webapps/
+COPY --from=buildMaven /app/target/*.war /usr/local/tomcat/webapps/
 
 EXPOSE 8080
