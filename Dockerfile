@@ -12,6 +12,6 @@ RUN mvn package -DskipTests
 FROM tomcat:9.0-jdk11-openjdk
 
 # Копируем собранный WAR из этапа build.
-COPY --from=buildMaven /myApp/target/*.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=buildMaven /myApp/target/hello-1.0.war /usr/local/tomcat/webapps/hello-1.0.war
 
 EXPOSE 8080
