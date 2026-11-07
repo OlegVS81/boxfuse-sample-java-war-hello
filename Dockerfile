@@ -11,7 +11,7 @@ RUN mvn package -DskipTests
 # Этап 2: финальный образ с Tomcat
 FROM tomcat:9.0-jdk11-openjdk
 
-# Копируем любой WAR-файл из target стадии buildMaven
+# Копируем любой WAR-файл из target стадии buildMaven123
 COPY --from=buildMaven /app/target/*.war /usr/local/tomcat/webapps/
 
 EXPOSE 8080
