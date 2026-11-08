@@ -18,5 +18,5 @@ services:
     restart: unless-stopped
     depends_on:
       - build
- volumes:
+volumes:
   maven-cache:
