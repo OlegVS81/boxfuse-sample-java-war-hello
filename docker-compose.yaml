@@ -4,7 +4,7 @@ services:
     image: maven:3.8-openjdk-11
     working_dir: /app
     command: mvn package -DskipTests
-    restart: no
+    restart: "no"
     volumes: 
       - ".:/app"
       - "maven-cache:/root/.m2"
