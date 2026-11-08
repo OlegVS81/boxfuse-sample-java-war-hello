@@ -7,13 +7,16 @@ services:
     restart: no
     volumes: 
       - ".:/app"
+      - "maven-cache:/root/.m2"
+
   hello:
     image: tomcat:9.0-jdk11-openjdk
     ports:
       - "80:8080"
     volumes: 
-      - "/app/target/hello-1.0.war:/usr/local/tomcat/webapps/"
+      - "./target/hello-1.0.war:/usr/local/tomcat/webapps/"
     restart: unless-stopped
     depends_on:
       - build
-      #www
+ volumes:
+  maven-cache:
