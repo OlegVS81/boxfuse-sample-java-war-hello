@@ -2,8 +2,10 @@
 services:
   build:
     image: maven:3.8-openjdk-11
+    working_dir: /app
     command: mvn package -DskipTests
-    volumes: "src: ./src"
+    volumes: 
+      - ".:/app"
     restart: no
   hello:
     image: tomcat:9.0-jdk11-openjdk
