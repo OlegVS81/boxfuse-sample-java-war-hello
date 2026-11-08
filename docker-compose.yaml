@@ -14,7 +14,7 @@ services:
     ports:
       - "80:8080"
     volumes: 
-      - "./target/hello-1.0.war:/usr/local/tomcat/webapps/"
+      - "./target/hello-1.0.war:/usr/local/tomcat/webapps/ROOT.war"
     restart: unless-stopped
     depends_on:
       - build
