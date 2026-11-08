@@ -4,14 +4,14 @@ services:
     image: maven:3.8-openjdk-11
     working_dir: /app
     command: mvn package -DskipTests
+    restart: no
     volumes: 
       - ".:/app"
-    restart: no
   hello:
     image: tomcat:9.0-jdk11-openjdk
     ports:
       - "80:8080"
-    volumes: "/app/target/*.war:/usr/local/tomcat/webapps/"
+    volumes: "/app/target/hello-1.0.war:/usr/local/tomcat/webapps/"
     restart: unless-stopped
     depends_on:
       - build
