@@ -1,0 +1,37 @@
+---
+- name: Build 
+  host: build-vm
+  become: true
+  vars:
+    proj_path: "/root/..."
+    war_fail: {{ proj_path }}/target/hello-1.0.war"
+
+  tasks:
+    -name: Ensure proj dir exist
+
+    -name: Run maven build
+
+    -name: Verifay war-file
+
+    -name: Run tomcat
+
+
+- name: Copy build artifact to Nexus
+  host: build-vm
+  become: true
+  vars:
+
+  tasks: -name: Ensure Nexus dir exist
+  tasks: -name: Create dest directory on Nexus
+  tasks: -name: Copy artefat to Nexus
+
+- name: Deploy 
+  host: deploy-vm
+  become: true
+  vars:    
+
+  tasks:
+    -name: Deploy
+
+  
+
