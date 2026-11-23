@@ -24,4 +24,4 @@
         dest: "{{ project_dir }}"
         depth: 1
         single_branch: true
-        branch: master
+        version: master
