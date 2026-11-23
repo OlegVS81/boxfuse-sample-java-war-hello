@@ -1,5 +1,5 @@
 ---
-- name: Stage 1: Prepare build node and clone repo
+- name: Stage 1: Prepare build node, clone repo and build WAR
   hosts: build-nodes
   become: true
   vars:
@@ -7,9 +7,9 @@
     build_root: "/opt/build"
     project_dir: "{{ build_root }}/{{ proj_name }}"
     repo_url: "https://github.com/OlegVS81/boxfuse-sample-java-war-hello"
-    registry: "81.26.184.88:5000" #nexus on control node
+    registry: "81.26.184.88:5000"
     image_name: "{{ registry }}/{{ proj_name }}"
-    version: 1.0.0
+    version: "1.0.0"
 
   tasks:
     - name: Ensure build directory exists
@@ -18,35 +18,10 @@
         state: directory
         mode: "0755"
 
-    - name: Clone project from github
+    - name: Clone project from GitHub
       git:
         repo: "{{ repo_url }}"
         dest: "{{ project_dir }}"
         depth: 1
         single_branch: true
         branch: master
-    #- name: Verify war-file
-
-    #- name: Run tomcat
-
-
-#- name: Copy build artifact to Nexus
-#  hosts: build-vm
-#  become: true
-#  vars:
-
-#  tasks: 
-#    - name: Ensure Nexus dir exist 
-#    - name: Create dest directory on Nexus
-#    - name: Copy artifat to Nexus
-
-#- name: Deploy 
-#  hosts: deploy-vm
-#  become: true
-#  vars:    
-
-#  tasks:
-#    - name: Deploy
-
-  
-
