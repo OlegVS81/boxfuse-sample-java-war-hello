@@ -3,17 +3,24 @@
   host: build-vm
   become: true
   vars:
-    proj_path: "/root/..."
-    war_fail: {{ proj_path }}/target/hello-1.0.war"
+    proj_name: "hello-1"
+    build_path: "opt/build/"{{ proj_name }}
 
   tasks:
-    -name: Ensure proj dir exist
+    - name: Ensure build directory exists
+      file:
+        path: "{{ build_path }}"
+        state: diectory
+        mode: "0755"
 
-    -name: Run maven build
+    - name: Copy DockerFile and source files to build node
+      copy:
+        src: "{{ build_path }}"
 
-    -name: Verifay war-file
 
-    -name: Run tomcat
+    - name: Verifay war-file
+
+    - name: Run tomcat
 
 
 - name: Copy build artifact to Nexus
@@ -21,9 +28,12 @@
   become: true
   vars:
 
-  tasks: -name: Ensure Nexus dir exist
-  tasks: -name: Create dest directory on Nexus
-  tasks: -name: Copy artefat to Nexus
+  tasks: 
+    - name: Ensure Nexus dir exist
+  tasks: 
+    - name: Create dest directory on Nexus
+  tasks: 
+    - name: Copy artefat to Nexus
 
 - name: Deploy 
   host: deploy-vm
