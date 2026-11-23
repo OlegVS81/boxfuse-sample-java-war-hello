@@ -1,5 +1,5 @@
 ---
-- name: Stage 1: Prepare build node, clone repo and build WAR
+- name: Prepare build node, clone repo and build WAR
   hosts: build-nodes
   become: true
   vars:
