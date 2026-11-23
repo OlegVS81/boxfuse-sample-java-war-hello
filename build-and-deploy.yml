@@ -1,47 +1,52 @@
 ---
-- name: Build 
-  host: build-vm
+- name: Stage 1: Prepare build node and clone repo
+  hosts: build-nodes
   become: true
   vars:
     proj_name: "hello-1"
-    build_path: "opt/build/"{{ proj_name }}
+    build_root: "/opt/build"
+    project_dir: "{{ build_root }}/{{ proj_name }}"
+    repo_url: "https://github.com/OlegVS81/boxfuse-sample-java-war-hello"
+    registry: "81.26.184.88:5000" #nexus on control node
+    image_name: "{{ registry }}/{{ proj_name }}"
+    version: 1.0.0
 
   tasks:
     - name: Ensure build directory exists
       file:
-        path: "{{ build_path }}"
-        state: diectory
+        path: "{{ build_root }}"
+        state: directory
         mode: "0755"
 
-    - name: Copy DockerFile and source files to build node
-      copy:
-        src: "{{ build_path }}"
+    - name: Clone project from github
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ project_dir }}"
+        depth: 1
+        single_branch: true
+        branch: master
+    #- name: Verify war-file
+
+    #- name: Run tomcat
 
 
-    - name: Verifay war-file
+#- name: Copy build artifact to Nexus
+#  hosts: build-vm
+#  become: true
+#  vars:
 
-    - name: Run tomcat
+#  tasks: 
+#    - name: Ensure Nexus dir exist 
+#    - name: Create dest directory on Nexus
+#    - name: Copy artifat to Nexus
 
+#- name: Deploy 
+#  hosts: deploy-vm
+#  become: true
+#  vars:    
 
-- name: Copy build artifact to Nexus
-  host: build-vm
-  become: true
-  vars:
-
-  tasks: 
-    - name: Ensure Nexus dir exist
-  tasks: 
-    - name: Create dest directory on Nexus
-  tasks: 
-    - name: Copy artefat to Nexus
-
-- name: Deploy 
-  host: deploy-vm
-  become: true
-  vars:    
-
-  tasks:
-    -name: Deploy
+#  tasks:
+#    - name: Deploy
 
   
 
