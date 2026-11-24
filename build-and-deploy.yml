@@ -17,7 +17,10 @@
         path: "{{ build_root }}"
         state: directory
         mode: "0755"
-
+    - name: Remove old project directory if exists
+      file:
+        path: "{{ project_dir }}"
+        state: absent
     - name: Clone project from GitHub
       git:
         repo: "{{ repo_url }}"
@@ -25,3 +28,4 @@
         depth: 1
         single_branch: true
         version: master
+        executable: "/usr/bin/git"
