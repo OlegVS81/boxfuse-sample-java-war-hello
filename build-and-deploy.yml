@@ -12,24 +12,14 @@
     version: "1.0.0"
 
   tasks:
-    - name: Ensure build directory exists
-      file:
-        path: "{{ build_root }}"
-        state: directory
-        mode: "0755"
-    - name: Remove old project directory if exists
-      file:
-        path: "{{ project_dir }}"
-        state: absent
-
-    - name: Clone project from GitHub
+    - name: Clone or pull project from GitHub
       git:
-        repo: "{{ repo_url }}"
-        dest: "{{ project_dir }}"
-        depth: 1
-        single_branch: true
+        repo: "https://github.com/boxfuse/boxfuse-sample-java-war-hello.git"
+        dest: /opt/build/hello-1
         version: master
-        executable: "/usr/bin/git"
+        update: yes    
+        force: no      
+      become: yes
 
     - name: Install Maven if not present (Ubuntu)
       apt:
