@@ -26,8 +26,11 @@
         name: maven
         state: present
         update_cache: yes
+      loop:
+       - git
+       - maven
+       - openjdk-11-jdk
       when: ansible_os_family == "Debian"
-
 
     - name: Configure insecure-registries on build node
       copy:
