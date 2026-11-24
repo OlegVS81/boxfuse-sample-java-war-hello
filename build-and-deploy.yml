@@ -14,8 +14,8 @@
   tasks:
     - name: Clone or pull project from GitHub
       git:
-        repo: "https://github.com/boxfuse/boxfuse-sample-java-war-hello.git"
-        dest: /opt/build/hello-1
+        repo: "https://github.com/OlegVS81/boxfuse-sample-java-war-hello"
+        dest: "{{ image_name }}"
         version: master
         update: yes    
         force: no      
