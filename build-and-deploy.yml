@@ -21,7 +21,7 @@
       file:
         path: "{{ project_dir }}"
         state: absent
-        
+
     - name: Clone project from GitHub
       git:
         repo: "{{ repo_url }}"
@@ -48,6 +48,11 @@
     - name: Show Maven output on failure
       debug:
         msg: "{{ maven_build.stdout }}"
+      when: maven_build.failed
+
+    - name: Show Maven stderr on failure
+      debug:
+        msg: "{{ maven_build.stderr }}"
       when: maven_build.failed
 
     - name: Show Maven stderr on failure
