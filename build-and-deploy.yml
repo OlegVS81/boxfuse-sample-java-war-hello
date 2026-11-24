@@ -1,5 +1,5 @@
 ---
-- name: Stage 1: Prepare build node, clone repo, configure Docker
+- name: Stage 1: Prepare build node, clone repo, configure Dockerr
   hosts: build-nodes
   become: true
   vars:
@@ -10,31 +10,27 @@
     registry: "81.26.184.88:5000"
     image_name: "{{ registry }}/{{ proj_name }}"
     version: "1.0.0"
+
   tasks:
-    - name: Ensure build root directory exists
-      file:
-        path: "{{ build_root }}"
-        state: directory
-        mode: "0755"
-
-    - name: Install Git, Maven, and OpenJDK on build node
-      apt:
-        name: "{{ item }}"
-        state: present
-        update_cache: yes
-      loop:
-        - git
-        - maven
-        - openjdk-11-jdk
-      when: ansible_os_family == "Debian"
-
-    - name: Clone or update project from GitHub
+    - name: Clone or pull project from GitHub
       git:
         repo: "{{ repo_url }}"
         dest: "{{ project_dir }}"
-        version: master
-        update: yes
-        force: no
+        version: masterS
+        update: yes    
+        force: no      
+      become: yes
+
+    - name: Install Maven if not present (Ubuntu)
+      apt:
+        name: maven
+        state: present
+        update_cache: yes
+      loop:
+       - git
+       - maven
+       - openjdk-11-jdk
+      when: ansible_os_family == "Debian"
 
     - name: Configure insecure-registries on build node
       copy:
@@ -58,17 +54,18 @@
         username: admin
         password: "{{ nexus_admin_password }}"
 
-
-- name: Stage 2: Build WAR, Docker image, and push to Nexus
+- name: Stage 2: build WAR
   hosts: build-nodes
   become: true
   vars:
     proj_name: "hello-1"
     build_root: "/opt/build"
     project_dir: "{{ build_root }}/{{ proj_name }}"
+    repo_url: "https://github.com/OlegVS81/boxfuse-sample-java-war-hello"
     registry: "81.26.184.88:5000"
     image_name: "{{ registry }}/{{ proj_name }}"
     version: "1.0.0"
+
   tasks:
     - name: Build WAR file with Maven
       command: mvn clean package -DskipTests
@@ -77,7 +74,7 @@
       register: maven_build
       failed_when: maven_build.rc != 0
 
-    - name: Show Maven stdout on failure
+    - name: Show Maven output on failure
       debug:
         msg: "{{ maven_build.stdout }}"
       when: maven_build.failed
@@ -87,62 +84,22 @@
         msg: "{{ maven_build.stderr }}"
       when: maven_build.failed
 
+    - name: Show Maven stderr on failure
+      debug:
+        msg: "{{ maven_build.stderr }}"
+      when: maven_build.failed
+
     - name: Verify WAR file exists
       stat:
-        path: "{{ project_dir }}/target/*.war"
+        path: "{{ project_dir }}/target/hello-1.0.war"
       register: war_stat
 
     - name: Fail if WAR not found
       fail:
         msg: "WAR file not found in {{ project_dir }}/target/. Check Maven build output."
-      when: not war_stat.files | length > 0
+      when: not war_stat.stat.exists
 
     - name: Show success message with path
       debug:
-        msg: "Successfully found WAR file(s): {{ war_stat.files | map(attribute='path') | list }}"
-      when: war_stat.files | length > 0
-
-    - name: Build Docker image with WAR
-      docker_image:
-        name: "{{ image_name }}"
-        tag: "{{ version }}"
-        source: build
-        build:
-          path: "{{ project_dir }}"
-          dockerfile: Dockerfile
-
-    - name: Push image to Nexus
-      docker_image:
-        name: "{{ image_name }}"
-        tag: "{{ version }}"
-        state: present
-
-
-- name: Stage 3: Deploy application on deploy node
-  hosts: deploy-nodes
-  become: true
-  vars:
-    proj_name: "hello-1"
-    registry: "81.26.184.88:5000"
-    image_name: "{{ registry }}/{{ proj_name }}"
-    version: "1.0.0"
-  tasks:
-    - name: Ensure Docker is running
-      systemd:
-        name: docker
-        state: started
-
-    - name: Pull the image from Nexus
-      docker_image:
-        name: "{{ image_name }}"
-        tag: "{{ version }}"
-        state: present
-
-    - name: Run the application container
-      docker_container:
-        name: hello-app
-        image: "{{ image_name }}:{{ version }}"
-        restart_policy: always
-        ports:
-          - "8080:8080"
-        state: started
+        msg: "Successfully found WAR file: {{ war_stat.stat.path }}"
+      when: war_stat.stat.exists
