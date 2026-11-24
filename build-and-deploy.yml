@@ -29,3 +29,9 @@
         single_branch: true
         version: master
         executable: "/usr/bin/git"
+    - name: Install Maven if not present (Ubuntu)
+      apt:
+        name: maven
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
