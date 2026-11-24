@@ -64,7 +64,7 @@
     version: "1.0.0"
 
   tasks:
-      - name: Build WAR file with Maven
+    - name: Build WAR file with Maven
       command: mvn clean package -DskipTests
       args:
         chdir: "{{ project_dir }}"
