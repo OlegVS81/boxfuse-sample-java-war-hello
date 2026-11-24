@@ -1,5 +1,5 @@
 ---
-- name: Prepare build node, clone repo and build WAR
+- name: Stage 1: Prepare build node, clone repo
   hosts: build-nodes
   become: true
   vars:
@@ -28,7 +28,43 @@
         update_cache: yes
       when: ansible_os_family == "Debian"
 
-    - name: Build WAR file with Maven
+
+    - name: Configure insecure-registries on build node
+      copy:
+        content: |
+          {
+            "insecure-registries": ["{{ registry }}"]
+          }
+        dest: /etc/docker/daemon.json
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Restart Docker on build node
+      systemd:
+        name: docker
+        state: restarted
+
+    - name: Login to Nexus Docker Registry
+      docker_login:
+        registry: "{{ registry }}"
+        username: admin
+        password: "{{ nexus_admin_password }}"
+
+- name: Stage 2: build WAR
+  hosts: build-nodes
+  become: true
+  vars:
+    proj_name: "hello-1"
+    build_root: "/opt/build"
+    project_dir: "{{ build_root }}/{{ proj_name }}"
+    repo_url: "https://github.com/OlegVS81/boxfuse-sample-java-war-hello"
+    registry: "81.26.184.88:5000"
+    image_name: "{{ registry }}/{{ proj_name }}"
+    version: "1.0.0"
+
+  tasks:
+      - name: Build WAR file with Maven
       command: mvn clean package -DskipTests
       args:
         chdir: "{{ project_dir }}"
