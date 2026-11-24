@@ -41,3 +41,12 @@
         chdir: "{{ project_dir }}"
       register: maven_build
       failed_when: maven_build.rc != 0
+    - name: Show Maven output on failure
+      debug:
+        msg: "{{ maven_build.stdout }}"
+      when: maven_build.failed
+
+    - name: Show Maven stderr on failure
+      debug:
+        msg: "{{ maven_build.stderr }}"
+      when: maven_build.failed
