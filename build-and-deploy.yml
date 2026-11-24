@@ -58,4 +58,4 @@
     - name: Fail if WAR not found
       fail:
         msg: "WAR file not found in {{ project_dir }}/target/. Check Maven build output."
-      when: not war_stat.files | length > 0
+      when: not war_file.stat.exists
