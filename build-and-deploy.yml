@@ -58,7 +58,7 @@
     - name: Fail if WAR not found
       fail:
         msg: "WAR file not found in {{ project_dir }}/target/. Check Maven build output."
-      when: not war_file.stat.exists
+      when: not war_stat.stat.exists
 
     - name: Show success message with path
       debug:
