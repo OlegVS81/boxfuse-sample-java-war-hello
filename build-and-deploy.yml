@@ -52,10 +52,10 @@
 
     - name: Verify WAR file exists
       stat:
-        path: "{{ proj_dir }}/target/*.war"
+        path: "{{ project_dir }}/target/*.war"
       register: war_stat
 
     - name: Fail if WAR not found
       fail:
-        msg: "WAR file not found in {{ proj_dir }}/target/. Check Maven build output."
+        msg: "WAR file not found in {{ project_dir }}/target/. Check Maven build output."
       when: not war_stat.files | length > 0
