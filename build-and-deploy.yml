@@ -21,6 +21,7 @@
       file:
         path: "{{ project_dir }}"
         state: absent
+        
     - name: Clone project from GitHub
       git:
         repo: "{{ repo_url }}"
@@ -29,18 +30,21 @@
         single_branch: true
         version: master
         executable: "/usr/bin/git"
+
     - name: Install Maven if not present (Ubuntu)
       apt:
         name: maven
         state: present
         update_cache: yes
       when: ansible_os_family == "Debian"
+
     - name: Build WAR file with Maven
       command: mvn clean package -DskipTests
       args:
         chdir: "{{ project_dir }}"
       register: maven_build
       failed_when: maven_build.rc != 0
+
     - name: Show Maven output on failure
       debug:
         msg: "{{ maven_build.stdout }}"
