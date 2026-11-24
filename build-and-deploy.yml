@@ -35,3 +35,9 @@
         state: present
         update_cache: yes
       when: ansible_os_family == "Debian"
+    - name: Build WAR file with Maven
+      command: mvn clean package -DskipTests
+      args:
+        chdir: "{{ project_dir }}"
+      register: maven_build
+      failed_when: maven_build.rc != 0
