@@ -59,3 +59,13 @@
       debug:
         msg: "{{ maven_build.stderr }}"
       when: maven_build.failed
+
+    - name: Verify WAR file exists
+      stat:
+        path: "{{ proj_dir }}/target/*.war"
+      register: war_stat
+
+    - name: Fail if WAR not found
+      fail:
+        msg: "WAR file not found in {{ proj_dir }}/target/. Check Maven build output."
+      when: not war_stat.files | length > 0
