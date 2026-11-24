@@ -1,5 +1,5 @@
 ---
-- name: Stage 1: Prepare build node, clone repo
+- name: Stage 1: Prepare build node, clone repo, configure Docker
   hosts: build-nodes
   become: true
   vars:
